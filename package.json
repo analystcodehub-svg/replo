@@ -1,0 +1,13 @@
+{
+  "name": "female-expert-node-client",
+  "version": "1.0.0",
+  "description": "Female Expert Console and WebRTC Client in Node.js",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "ws": "^8.17.0"
+  }
+}

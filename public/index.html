@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Female Expert Console & WebRTC Audio</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <!-- TOP HEADER -->
+    <header class="header">
+      <div class="profile-card">
+        <div class="avatar-container">
+          <div class="avatar" id="avatarText">FE</div>
+          <div class="status-indicator online" id="statusDot"></div>
+        </div>
+        <div class="profile-info">
+          <div class="name-row">
+            <h2 id="expertName">Loading...</h2>
+            <span class="badge" id="expertLang">Hindi</span>
+          </div>
+          <div class="uid-row">
+            <span class="uid-text" id="expertUid">UID: ...</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-box">
+          <span class="stat-label">EARNINGS</span>
+          <span class="stat-value" id="totalEarnings">₹0.00</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">BALANCE</span>
+          <span class="stat-value highlight" id="balance">₹0.00</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">TALK TIME</span>
+          <span class="stat-value" id="talkTime">0m 0s</span>
+        </div>
+      </div>
+
+      <!-- MULTI-ACCOUNT ACTIONS -->
+      <div class="header-multi-actions">
+        <button id="btnNewFemaleTab" class="btn btn-sm btn-outline" title="Open another female ID in a new browser tab">
+          ➕ Open Another Female (New Tab)
+        </button>
+        <button id="btnSwitchExpert" class="btn btn-sm btn-secondary" title="Switch or log in as another female expert in this tab">
+          🔄 Switch Expert
+        </button>
+        <button id="btnLogout" class="btn btn-sm btn-danger" title="Log out this female expert and go offline">
+          🚪 Logout
+        </button>
+      </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+      <!-- LEFT: AUDIO CONTROLS & DEVICE SELECTOR -->
+      <section class="card audio-card">
+        <h3>🎙️ Audio & Voice Controls</h3>
+        <p class="subtitle">Supports Voicemod, WO Mic, or standard headset</p>
+
+        <div class="form-group">
+          <label for="micSelect">Microphone Input:</label>
+          <select id="micSelect" class="select-input">
+            <option value="">Default Microphone</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Mic Level Meter:</label>
+          <div class="meter-bar">
+            <div class="meter-fill" id="micMeterFill"></div>
+          </div>
+        </div>
+
+        <div class="btn-group">
+          <button id="btnTestMic" class="btn btn-outline">Test Microphone</button>
+          <button id="btnToggleMute" class="btn btn-secondary" disabled>Mute Mic</button>
+        </div>
+      </section>
+
+      <!-- RIGHT: CHAT INTERFACE -->
+      <section class="card chat-card">
+        <div class="chat-header">
+          <div>
+            <h3 id="chatTargetName">💬 Live Chat</h3>
+            <span class="chat-target-uid" id="chatTargetUid">Select or message a user</span>
+          </div>
+          <div class="chat-actions">
+            <input type="text" id="customUserUid" class="input-sm" placeholder="User UID to chat...">
+            <button id="btnStartChat" class="btn btn-sm btn-outline">Chat</button>
+          </div>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+          <div class="empty-chat">No active messages yet. Messages from callers will appear here in real-time.</div>
+        </div>
+
+        <div class="chat-input-bar">
+          <input type="text" id="messageInput" placeholder="Type a message to send..." class="message-input">
+          <button id="btnSendMessage" class="btn btn-primary">Send</button>
+        </div>
+      </section>
+    </main>
+
+    <!-- LOGIN MODAL (shown if not logged in) -->
+    <div class="modal-overlay hidden" id="loginModal">
+      <div class="modal-card login-modal-card">
+        <div class="avatar" style="margin: 0 auto 16px; width: 60px; height: 60px; font-size: 26px;">✨</div>
+        <h2>Female Expert Login</h2>
+        <p class="subtitle" style="margin-bottom: 20px;">Choose a registered female expert or enter UID</p>
+
+        <div class="quick-experts-container" id="quickExpertsList">
+          <div style="font-size: 12px; color: #94a3b8; text-align: center;">Loading registered experts...</div>
+        </div>
+
+        <div style="margin: 20px 0 16px; display: flex; align-items: center; gap: 8px;">
+          <div style="flex: 1; height: 1px; background: #334155;"></div>
+          <span style="font-size: 11px; color: #64748b; font-weight: 600;">OR PASTE CUSTOM UID</span>
+          <div style="flex: 1; height: 1px; background: #334155;"></div>
+        </div>
+
+        <div class="form-group" style="text-align: left;">
+          <input type="text" id="loginUidInput" class="select-input" placeholder="e.g. 21ebxgL71BX8eC5yqEVOSzIj7xm1">
+        </div>
+
+        <button id="btnLoginSubmit" class="btn btn-primary" style="width: 100%; padding: 12px; font-size: 14px; font-weight: 700;">
+          Login to Console
+        </button>
+      </div>
+    </div>
+
+    <!-- INCOMING CALL MODAL -->
+    <div class="modal-overlay hidden" id="incomingCallModal">
+      <div class="modal-card">
+        <div class="ringing-pulse">
+          <div class="modal-avatar">📞</div>
+        </div>
+        <h2 id="modalCallerName">Incoming Call...</h2>
+        <p class="modal-uid" id="modalCallerUid">UID: ...</p>
+        <p class="modal-coins" id="modalCallerCoins">Coins: ...</p>
+        <p class="modal-rate" id="modalCallRate">₹4.0 / min</p>
+
+        <div class="modal-buttons">
+          <button id="btnAcceptCall" class="btn btn-call-accept">Answer Call</button>
+          <button id="btnRejectCall" class="btn btn-call-reject">Decline</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACTIVE CALL BANNER -->
+    <div class="active-call-banner hidden" id="activeCallBanner">
+      <div class="active-call-info">
+        <div class="pulse-dot"></div>
+        <div>
+          <strong id="activeCallerName">Caller</strong>
+          <span id="callDuration" class="call-timer">00:00</span>
+        </div>
+      </div>
+      <div class="active-call-actions">
+        <button id="btnMuteActive" class="btn btn-sm btn-secondary">Mute</button>
+        <button id="btnEndCall" class="btn btn-sm btn-danger">Hang Up</button>
+      </div>
+    </div>
+
+    <!-- HIDDEN AUDIO ELEMENT FOR REMOTE VOICE -->
+    <audio id="remoteAudio" autoplay></audio>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
