@@ -1,0 +1,21 @@
+# Netlify Configuration for Female Expert Web Console
+[build]
+  publish = "public"
+  command = "npm install"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# Route all web traffic to index.html for Single-Page App handling
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Permissions and Security Headers for WebRTC Microphone Access
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Permissions-Policy = "microphone=*"
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "SAMEORIGIN"
